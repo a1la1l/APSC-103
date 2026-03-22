@@ -5,10 +5,6 @@ INVENTORY_FILE = "inventory.xlsx"
 TRANSACTIONS_FILE = "transactions.xlsx"
 
 
-# ==============================
-# INVENTORY FUNCTIONS
-# ==============================
-
 def load_inventory():
     try:
         return pd.read_excel(INVENTORY_FILE)
@@ -43,10 +39,6 @@ def get_stock(equipment_name):
         return int(row.iloc[0]["Stock"])
     return 0
 
-
-# ==============================
-# TRANSACTION FUNCTIONS
-# ==============================
 
 def load_transactions():
     try:
@@ -87,10 +79,6 @@ def record_transaction(student_id, first_name, last_name,
     elif trans_type == "Return":
         update_stock(equipment, quantity)
 
-
-# ==============================
-# SEARCH / ANALYSIS FUNCTIONS
-# ==============================
 
 def get_student_history(student_id):
     df = load_transactions()
