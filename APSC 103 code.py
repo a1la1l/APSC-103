@@ -1,0 +1,663 @@
+import tkinter as tk
+from datetime import datetime
+
+# Example allowed users (username: password)
+ALLOWED_USERS = {
+    "user1": "pass",
+    "icon": "icon123"
+}
+ALLOWED_ADMINS = {
+    "admin": "1234"
+}
+
+LARGE_FONT= ("Verdana", 12)
+
+
+class SeaofBTCapp(tk.Tk):
+
+    def __init__(self, *args, **kwargs):
+        
+        tk.Tk.__init__(self, *args, **kwargs)
+        container = tk.Frame(self)
+
+        container.pack(side="top", fill="both", expand = True)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+
+        self.frames = {}
+
+        for F in (generateMainUI, adminLogin, iConLogin, iConMainUI, adminMainUI, loanUI, returnUI, dataAnalysisUI, addEquipmentUI, removeEquipmentUI, addiConUI, removeiConUI, changeAdminPasswordUI):
+
+            frame = F(container, self)
+
+            self.frames[F] = frame
+
+            frame.grid(row=0, column=0, sticky="nsew")
+        self.geometry("1920x1080")
+        self.show_frame(generateMainUI)
+
+    def show_frame(self, cont):
+
+        frame = self.frames[cont]
+        frame.tkraise()
+
+        
+class generateMainUI(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        label = tk.Label(self, text="Start Page", font=LARGE_FONT)
+        label.pack(pady=10,padx=10)
+
+        button = tk.Button(self, text="Admin login",
+                            command=lambda: controller.show_frame(adminLogin))
+        button.pack(padx=150, pady=150)
+
+        button2 = tk.Button(self, text="iCon login",
+                            command=lambda: controller.show_frame(iConLogin))
+        button2.pack()
+
+
+class adminLogin(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        label = tk.Label(self, text="Admin login", font=LARGE_FONT)
+        label.pack(pady=10,padx=10)
+
+        label2 = tk.Label(self, text="Enter your admin username", font=LARGE_FONT)
+        label2.place(x=100,y=200,)
+
+        self.username_entry = tk.Entry(self)
+        self.username_entry.place(x=400, y=205)
+
+        label3 = tk.Label(self, text="Enter your admin password", font=LARGE_FONT)
+        label3.place(x=100,y=300,)
+
+        self.password_entry = tk.Entry(self, show="*")
+        self.password_entry.place(x=400, y=305)
+
+        self.error_label = tk.Label(self, text="", fg="red", font=LARGE_FONT)
+        self.error_label.place(x=100, y=350)
+
+        button1 = tk.Button(self, text="Back",
+                            command=lambda: controller.show_frame(generateMainUI))
+        button1.place(x=25,y=25)
+
+        button2 = tk.Button(self, text="Login",
+                            command=self.check_admin_login)
+        button2.place(x=100,y=400)
+    def check_admin_login(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+
+        # Check credentials
+        if username in ALLOWED_ADMINS and ALLOWED_ADMINS[username] == password:
+            self.error_label.config(text="")  # clear error
+            self.controller.show_frame(adminMainUI)
+            self.username_entry.delete(0, tk.END)  # clear username
+            self.password_entry.delete(0, tk.END)  # clear password
+        else:
+            self.error_label.config(text="Invalid username or password")
+
+
+class iConLogin(tk.Frame):
+
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent)
+        label1 = tk.Label(self, text="iCon login", font=LARGE_FONT)
+        label1.pack(pady=10,padx=10)
+
+        label2 = tk.Label(self, text="Enter your iCons username", font=LARGE_FONT)
+        label2.place(x=100,y=200,)
+
+        self.username_entry = tk.Entry(self)
+        self.username_entry.place(x=400, y=205)
+
+        label3 = tk.Label(self, text="Enter your iCons password", font=LARGE_FONT)
+        label3.place(x=100,y=300,)
+
+        self.password_entry = tk.Entry(self, show="*")
+        self.password_entry.place(x=400, y=305)
+
+        self.error_label = tk.Label(self, text="", fg="red", font=LARGE_FONT)
+        self.error_label.place(x=100, y=350)
+
+        button1 = tk.Button(self, text="Back",
+                            command=lambda: controller.show_frame(generateMainUI))
+        button1.place(x=25,y=25)
+
+        button2 = tk.Button(self, text="Login",
+                            command=self.check_login)
+        button2.place(x=100,y=400)
+
+    def check_login(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+
+        # Check credentials
+        if username in ALLOWED_USERS and ALLOWED_USERS[username] == password:
+            self.error_label.config(text="")  # clear error
+            self.controller.show_frame(iConMainUI)
+            self.username_entry.delete(0, tk.END)  # clear username
+            self.password_entry.delete(0, tk.END)  # clear password
+        else:
+            self.error_label.config(text="Invalid username or password")
+
+
+class iConMainUI(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        label1 = tk.Label(self, text="iCon Main UI", font=LARGE_FONT)
+        label1.pack(pady=10,padx=10)
+        
+
+        button1 = tk.Button(self, text="Loan",
+                            command=lambda: controller.show_frame(loanUI))
+        button1.place(x=100,y=200,)
+
+        button2 = tk.Button(self, text="Return",
+                            command=lambda: controller.show_frame(returnUI))
+        button2.place(x=900,y=200,)
+
+        button3 = tk.Button(self, text="Data analysis",
+                            command=lambda: controller.show_frame(dataAnalysisUI))
+        button3.place(x=500,y=200,)
+
+        button4 = tk.Button(self, text="Back",
+                            command=lambda: controller.show_frame(iConLogin))
+        button4.place(x=25,y=25)
+
+
+class loanUI(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        # Example equipment options
+        self.equipment_options = ["Laptop", "Camera", "Projector"]
+
+        label1 = tk.Label(self, text="Loan UI", font=LARGE_FONT)
+        label1.pack(pady=10, padx=10)
+
+        label2 = tk.Label(self, text="Student first name", font=LARGE_FONT)
+        label2.place(x=100, y=200)
+
+        self.student_first_name_entry = tk.Entry(self)
+        self.student_first_name_entry.place(x=100, y=250)
+
+        label3 = tk.Label(self, text="Student last name", font=LARGE_FONT)
+        label3.place(x=300, y=200)
+
+        self.student_last_name_entry = tk.Entry(self)
+        self.student_last_name_entry.place(x=300, y=250)
+
+        self.status_label = tk.Label(self, text="", font=LARGE_FONT)
+        self.status_label.place(x=100, y=500)
+
+        self.student_card_var = tk.BooleanVar()
+        self.student_card_checkbox = tk.Checkbutton(
+            self, text="Student card taken", variable=self.student_card_var
+        )
+        self.student_card_checkbox.place(x=100, y=300)
+
+        label4 = tk.Label(self, text="Equipment loaned", font=LARGE_FONT)
+        label4.place(x=100, y=350)
+
+      
+        self.equipment_var = tk.StringVar(value="    ")
+        self.equipment_combobox = tk.OptionMenu(
+        self,
+        self.equipment_var,
+        *self.equipment_options  # unpack list into arguments
+    )
+        self.equipment_combobox.place(x=300, y=350)
+
+        label5 = tk.Label(self, text="Amount", font=LARGE_FONT)
+        label5.place(x=100, y=400)
+
+        
+        self.amount_spinbox = tk.Spinbox(self, from_=1, to=10)
+        self.amount_spinbox.place(x=300, y=400)
+
+        button1 = tk.Button(self, text="Back",
+                            command=lambda: controller.show_frame(iConMainUI))
+        button1.place(x=25, y=25)
+
+        button2 = tk.Button(self, text="Submit",
+                            command=self.submit_loan)
+        button2.place(x=100, y=450)
+
+
+    def submit_loan(self):
+        first_name = self.student_first_name_entry.get()
+        last_name = self.student_last_name_entry.get()
+        student_card_taken = self.student_card_var.get()
+        equipment = self.equipment_var.get()
+        amount = self.amount_spinbox.get()
+
+        # Validation
+        if first_name and last_name and equipment!="    ":
+            self.status_label.config(
+                text="Submitted successfully",
+                fg="green"
+            )
+            current_time = datetime.now()
+            formatted_time = current_time.strftime("%d/%m/%Y %I:%M %p")
+
+            #to do: save to database
+            print(f"""
+Loan submitted:
+Name: {first_name} {last_name}
+Card Taken: {student_card_taken}
+Equipment: {equipment}
+Amount: {amount}
+Date/Time: {formatted_time}
+""")
+
+            self.student_first_name_entry.delete(0, tk.END)
+            self.student_last_name_entry.delete(0, tk.END)
+            self.student_card_var.set(False)
+            self.equipment_var.set("    ")
+            self.amount_spinbox.delete(0, tk.END)
+            self.amount_spinbox.insert(0, "1")
+
+        else:
+            self.status_label.config(
+            text="Submitted unsuccessfully",
+            fg="red"
+        )
+
+        
+class returnUI(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        #temporary example loan options
+        self.list_of_loans_options = ["Marcus Holloway", "Elena Varga", "Tyler Kensington", "Priya Deshmukh"]
+
+        label1 = tk.Label(self, text="Return UI", font=LARGE_FONT)
+        label1.pack(pady=10,padx=10)
+
+        label2 = tk.Label(self, text="List of Loans", font=LARGE_FONT)
+        label2.pack(pady=10,padx=10)
+
+        self.list_of_loans_var = tk.StringVar(value="    ")
+        self.list_of_loans_combobox = tk.OptionMenu(
+        self,
+        self.list_of_loans_var,
+        *self.list_of_loans_options  
+    )
+        self.list_of_loans_combobox.pack(pady=10,padx=10)
+
+        self.student_card_var = tk.BooleanVar()
+        self.student_card_checkbox = tk.Checkbutton(
+            self, text="Student card returned", variable=self.student_card_var
+        )
+        self.student_card_checkbox.pack(pady=10,padx=10)
+
+        label2 = tk.Label(self, text="Additional comments", font=LARGE_FONT)
+        label2.pack(pady=10,padx=10)
+
+        self.status_label = tk.Label(self, text="", font=LARGE_FONT)
+        self.status_label.pack(pady=10,padx=10)
+
+        self.comments_entry = tk.Entry(self)
+        self.comments_entry.pack(pady=10,padx=10)
+
+        button1 = tk.Button(self, text="Back",
+                            command=lambda: controller.show_frame(iConMainUI))
+        button1.place(x=25,y=25)
+
+        button2 = tk.Button(self, text="Submit return",
+                            command=self.submit_return)
+        button2.pack(pady=10,padx=10)
+
+    def submit_return(self):
+        selected_loan = self.list_of_loans_var.get()
+        student_card_returned = self.student_card_var.get()
+        comments = self.comments_entry.get()
+
+        if selected_loan != "    ":
+            self.status_label.config(
+                text="Return submitted successfully",
+                fg="green"
+            )
+            current_time = datetime.now()
+            formatted_time = current_time.strftime("%d/%m/%Y %I:%M %p")
+
+            self.comments_entry.delete(0, tk.END)  
+            self.student_card_var.set(False)
+            self.list_of_loans_var.set("    ")
+
+            #to do: save to database
+        else:
+            self.status_label.config(
+                text="Return submission failed",
+                fg="red"
+            )
+            
+            
+
+class dataAnalysisUI(tk.Frame): #idk what to do here
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        label1 = tk.Label(self, text="Data Analysis UI", font=LARGE_FONT)
+        label1.pack(pady=10,padx=10)
+
+        button1 = tk.Button(self, text="Back",
+                            command=lambda: controller.show_frame(iConMainUI))
+        button1.place(x=25,y=25)
+
+
+
+
+class adminMainUI(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        label1 = tk.Label(self, text="Admin Main UI", font=LARGE_FONT)
+        label1.pack(pady=10,padx=10)
+
+        button1 = tk.Button(self, text="Add Equipment",
+                            command=lambda: controller.show_frame(addEquipmentUI))
+        button1.place(x=100,y=200,)
+
+        button2 = tk.Button(self, text="Remove Equipment",
+                            command=lambda: controller.show_frame(removeEquipmentUI))
+        button2.place(x=900,y=200,)
+
+        button3 = tk.Button(self, text="Add iCon",
+                            command=lambda: controller.show_frame(addiConUI))
+        button3.place(x=100,y=300,)
+
+        button4 = tk.Button(self, text="Remove iCon",
+                            command=lambda: controller.show_frame(removeiConUI))
+        button4.place(x=900,y=300,)
+
+        button5 = tk.Button(self, text="Change Admin Password",
+                            command=lambda: controller.show_frame(changeAdminPasswordUI))
+        button5.place(x=500,y=400,)
+
+        button6 = tk.Button(self, text="Back",
+                            command=lambda: controller.show_frame(adminLogin))
+        button6.place(x=25,y=25)
+
+
+
+class addEquipmentUI(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        label1 = tk.Label(self, text="Add Equipment", font=LARGE_FONT)
+        label1.pack(pady=10,padx=10)
+
+        label2 = tk.Label(self, text="Equipment name", font=LARGE_FONT)
+        label2.pack(pady=10,padx=10)
+
+        self.equipment_name_entry = tk.Entry(self)
+        self.equipment_name_entry.pack(pady=10,padx=10)
+
+        label3 = tk.Label(self, text="Quantity", font=LARGE_FONT)
+        label3.pack(pady=10,padx=10)
+
+        self.quantity_spinbox = tk.Spinbox(self, from_=0, to=10000)
+        self.quantity_spinbox.pack(pady=10,padx=10)
+
+        button1 = tk.Button(self, text="Back",
+                            command=lambda: controller.show_frame(adminMainUI))
+        button1.place(x=25,y=25)
+
+        self.status_label = tk.Label(self, text="", font=LARGE_FONT)
+        self.status_label.pack(pady=10,padx=10)
+
+        button2 = tk.Button(self, text="add",
+                            command=self.add_equipment)
+        button2.pack(pady=10,padx=10)
+        
+    def add_equipment(self): 
+        equipment_name = self.equipment_name_entry.get()
+        quantity = self.quantity_spinbox.get()
+
+        if equipment_name and quantity.isdigit() and int(quantity) > 0:
+            self.status_label.config(
+                text="Equipment added successfully",
+                fg="green"
+            )
+            #to do: add to database
+            print(f"Added {quantity} of {equipment_name} to inventory")
+            self.equipment_name_entry.delete(0, tk.END)
+            self.quantity_spinbox.delete(0, tk.END)
+            self.quantity_spinbox.insert(0, "0")
+        else:
+            self.status_label.config(
+                text="Invalid input for equipment name or quantity",
+                fg="red"
+            )
+            print("Invalid input for equipment name or quantity")
+
+
+class removeEquipmentUI(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        #temporary example equipment options
+        self.equipment_options = ["Laptop", "Camera", "Projector"]
+        label1 = tk.Label(self, text="Remove Equipment", font=LARGE_FONT)
+        label1.pack(pady=10,padx=10)
+
+        label2 = tk.Label(self, text="Equipment name", font=LARGE_FONT)
+        label2.pack(pady=10,padx=10)
+
+        self.equipment_var = tk.StringVar(value="    ")
+        self.equipment_combobox = tk.OptionMenu(
+        self,
+        self.equipment_var,
+        *self.equipment_options  
+    )   
+        self.equipment_combobox.pack(pady=10,padx=10)
+
+        self.status_label = tk.Label(self, text="", font=LARGE_FONT)
+        self.status_label.pack(pady=10,padx=10)
+
+        button1 = tk.Button(self, text="Back",
+                            command=lambda: controller.show_frame(adminMainUI))
+        button1.place(x=25,y=25)
+
+        button2 = tk.Button(self, text="remove",
+                            command=self.remove_equipment)
+        button2.pack(pady=10,padx=10)
+
+    def remove_equipment(self):
+        equipment_name = self.equipment_var.get()
+
+        if equipment_name != "    ":
+            self.status_label.config(
+                text="Equipment removed successfully",
+                fg="green"
+            )
+            #to do: remove from database
+            print(f"Removed {equipment_name} from inventory")
+            self.equipment_var.set("    ")
+        else:
+            self.status_label.config(
+                text="Invalid input for equipment name",
+                fg="red"
+            )
+            print("Invalid input for equipment name")
+
+
+class addiConUI(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        label1 = tk.Label(self, text="Add iCon", font=LARGE_FONT)
+        label1.pack(pady=10,padx=10)
+
+        label2 = tk.Label(self, text="iCon username", font=LARGE_FONT)
+        label2.pack(pady=10,padx=10)
+
+        self.icon_username_entry = tk.Entry(self)
+        self.icon_username_entry.pack(pady=10,padx=10)
+
+        label3 = tk.Label(self, text="iCon password", font=LARGE_FONT)
+        label3.pack(pady=10,padx=10)
+
+        self.icon_password_entry = tk.Entry(self)
+        self.icon_password_entry.pack(pady=10,padx=10)
+
+        self.status_label = tk.Label(self, text="", font=LARGE_FONT)
+        self.status_label.pack(pady=10,padx=10)
+
+        button1 = tk.Button(self, text="Back",
+                            command=lambda: controller.show_frame(adminMainUI))
+        button1.place(x=25,y=25)
+
+        button2 = tk.Button(self, text="add",
+                            command=self.add_icon)  
+        button2.pack(pady=10,padx=10)
+    
+    def add_icon(self):
+        icon_username = self.icon_username_entry.get()
+        icon_password = self.icon_password_entry.get()
+
+        if icon_username and icon_password:
+            self.status_label.config(
+                text="iCon added successfully",
+                fg="green"
+            )
+            #to do: add to database
+            print(f"Added iCon with username: {icon_username}")
+            self.icon_username_entry.delete(0, tk.END)
+            self.icon_password_entry.delete(0, tk.END)
+        else:
+            self.status_label.config(
+                text="Invalid input for iCon username or password",
+                fg="red"
+            )
+            print("Invalid input for iCon username or password")
+
+
+class removeiConUI(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        #temporary example iCon usernames        
+        self.icon_usernames = ["user1", "icon", "user2"]
+        label1 = tk.Label(self, text="Remove iCon", font=LARGE_FONT)
+        label1.pack(pady=10,padx=10)
+        
+        label1 = tk.Label(self, text="iCon username", font=LARGE_FONT)
+        label1.pack(pady=10,padx=10)
+
+        self.icon_username_var = tk.StringVar(value="    ")
+        self.icon_username_combobox = tk.OptionMenu(
+            self,
+            self.icon_username_var,
+            *self.icon_usernames
+        )
+        self.icon_username_combobox.pack(pady=10,padx=10)
+
+        self.status_label = tk.Label(self, text="", font=LARGE_FONT)
+        self.status_label.pack(pady=10,padx=10)
+
+        button1 = tk.Button(self, text="Back",
+                            command=lambda: controller.show_frame(adminMainUI))
+        button1.place(x=25,y=25)
+
+        button2 = tk.Button(self, text="remove",
+                            command=self.remove_icon)
+        button2.pack(pady=10,padx=10)
+
+    def remove_icon(self):
+        icon_username = self.icon_username_var.get()
+
+        if icon_username != "    ":
+            self.status_label.config(
+                text="iCon removed successfully",
+                fg="green"
+            )
+            #to do: remove from database
+            print(f"Removed iCon with username: {icon_username}")
+            self.icon_username_var.set("    ")
+        else:
+            self.status_label.config(
+                text="Invalid input for iCon username",
+                fg="red"
+            )
+            print("Invalid input for iCon username")
+
+
+class changeAdminPasswordUI(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        label1 = tk.Label(self, text="Change Admin Password", font=LARGE_FONT)
+        label1.pack(pady=10,padx=10)
+
+        label2 = tk.Label(self, text="New password", font=LARGE_FONT)
+        label2.pack(pady=10,padx=10)
+
+        self.new_password_entry = tk.Entry(self)
+        self.new_password_entry.pack(pady=10,padx=10)
+
+        label3 = tk.Label(self, text="Confirm new password", font=LARGE_FONT)
+        label3.pack(pady=10,padx=10)
+
+        self.confirm_password_entry = tk.Entry(self)
+        self.confirm_password_entry.pack(pady=10,padx=10)
+
+        label4 = tk.Label(self, text="Current admin password", font=LARGE_FONT)
+        label4.pack(pady=10,padx=10)
+
+        self.current_password_entry = tk.Entry(self)
+        self.current_password_entry.pack(pady=10,padx=10)
+
+        self.status_label = tk.Label(self, text="", font=LARGE_FONT)
+        self.status_label.pack(pady=10,padx=10)
+
+        button1 = tk.Button(self, text="Back",
+                            command=lambda: controller.show_frame(adminMainUI))
+        button1.place(x=25,y=25)
+
+        button2 = tk.Button(self, text="Change Password",
+                            command=self.change_password)
+        button2.pack(pady=10,padx=10)
+
+    def change_password(self):
+        new_password = self.new_password_entry.get()
+        confirm_password = self.confirm_password_entry.get()
+        current_password = self.current_password_entry.get()
+
+        # For demonstration, we will just check against the first admin in ALLOWED_ADMINS
+        admin_username = next(iter(ALLOWED_ADMINS))
+        if current_password == ALLOWED_ADMINS[admin_username]:
+            if new_password == confirm_password and new_password:
+                self.status_label.config(
+                    text="Password changed successfully",
+                    fg="green"
+                )
+                #to do: update password in database
+                print(f"Changed password for admin {admin_username}")
+                self.new_password_entry.delete(0, tk.END)
+                self.confirm_password_entry.delete(0, tk.END)
+                self.current_password_entry.delete(0, tk.END)
+            else:
+                self.status_label.config(
+                    text="New passwords do not match or are empty",
+                    fg="red"
+                )
+                print("New passwords do not match or are empty")
+        else:
+            self.status_label.config(
+                text="Current password is incorrect",
+                fg="red"
+            )
+            print("Current password is incorrect")
+
+app = SeaofBTCapp()
+app.mainloop()
