@@ -1,0 +1,2 @@
+sigmaIcon,supers3curepasswrd
+bob,sigmapassword
