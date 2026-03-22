@@ -355,8 +355,24 @@ class dataAnalysisUI(tk.Frame): #idk what to do here
         label1.pack(pady=10,padx=10)
 
         button1 = tk.Button(self, text="Back",
-                            command=lambda: controller.show_frame(iConMainUI))
+                            command=lambda: controller.show_frame(adminMainUI))
         button1.place(x=25,y=25)
+
+        button2 = tk.Button(self, text="Generate graph of most loaned equipment",
+                            command=self.generate_graph)
+        button2.pack(pady=10,padx=10)
+
+        button3 = tk.Button(self, text="Generate table of how many times each piece of equipment has been loaned",
+                            command=self.generate_table)
+        button3.pack(pady=10,padx=10)
+
+    def generate_graph(self):
+        #to do: generate chart using data from database
+        print("Generating graph of most loaned equipment...")
+
+    def generate_table(self):
+        #to do: generate table using data from database
+        print("Generating table of how many times each piece of equipment has been loaned...")
 
 
 
