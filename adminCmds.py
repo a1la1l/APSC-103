@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 def addItem(item_name: str, stock: int) -> bool: # Define the function to take an item name, an integer stock, and return a boolean
-    try: # Start a try block to catch and handle any potential errors during the file operations
+    try: 
         if os.path.exists(INVENTORY_FILE): # Check if the specified inventory file already exists in the current directory
             inventory_df = pd.read_excel(INVENTORY_FILE) # If the file exists, load its contents into a pandas DataFrame
         else:
@@ -11,19 +11,41 @@ def addItem(item_name: str, stock: int) -> bool: # Define the function to take a
             
         if item_name in inventory_df['Item Name'].values: # Check if the exact item name is already present anywhere in the 'Equipment' column
             print(f"Error: {item_name} already exists in the inventory.") # Print a specific error message to the console alerting the user of the duplicate
-            return False # Return False to the user interface to indicate that the item addition was aborted
+            return False 
             
-        new_item = pd.DataFrame({'Item Name': [item_name], 'Stock': [stock]}) # Create a new, single-row DataFrame containing the provided item name and its initial stock value
+        new_item = pd.DataFrame({'Item Name': [item_name], 'Stock': [stock]}) # Create a header row
         inventory_df = pd.concat([inventory_df, new_item], ignore_index=True) # Append this new row to the bottom of the main DataFrame and reset the numerical index
         
-        inventory_df.to_excel(INVENTORY_FILE, index=False) # Overwrite the physical Excel file with the updated DataFrame, explicitly excluding the pandas row numbers
+        inventory_df.to_excel(INVENTORY_FILE, index=False) 
         return True 
         
     except Exception as error:
         print(f"An error occurred adding the item: {error}") 
         return False
-def deleteItem():
+def deleteItem(item_name: str):
+    try:
+        if not os.path.exists(INVENTORY_FILE):
+            print(f"Error: Inventory file {INVENTORY_FILE} does not exist.")
+            return False
 
+        inventory_df = pd.read_excel(INVENTORY_FILE)
+
+        if item_name not in inventory_df['Item Name'].values:
+            print(f"Error: {item_name} not found")
+            return False
+
+        # Filter out the item to be deleted
+        inventory_df = inventory_df[inventory_df['Item Name'] != item_name]
+
+        # Overwrite the file with the updated DataFrame
+        inventory_df.to_excel(INVENTORY_FILE, index=False)
+        print(f"Successfully deleted {item_name} from the inventory.")
+        return True
+
+    except Exception as error:
+        print(f"An error occurred deleting the item: {error}")
+        return False
+    
 def addIconLoginInfo(username: str, password: str):
         try:
             hpassword = hashlib.sha256(password.encode()).hexdigest()
